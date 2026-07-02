@@ -16,6 +16,7 @@ import TaskSeparator from "./TaskSeprator"
 
 const Tasks = () => {
   const [tasks, setTasks] = useState(TASKS)
+  const [addTaskDialogIsOpen, setTaskDialogIsOpen] = useState(true)
   const tasksMorning = tasks.filter((task) => task.time === "morning")
   const tasksAfternoon = tasks.filter((task) => task.time === "afternoon")
   const tasksEvening = tasks.filter((task) => task.time === "evening")
@@ -53,6 +54,10 @@ const Tasks = () => {
     toast.success("Tarefa removida com sucesso!")
   }
 
+  const handleDialogClose = () => {
+    setTaskDialogIsOpen(false)
+  }
+
   return (
     <div className="w-full space-y-6 px-8 py-16">
       <div className="flex w-full justify-between">
@@ -68,12 +73,15 @@ const Tasks = () => {
             <TrashIcon />
             Limpar tarefas
           </Button>
-          <Button>
+          <Button onClick={() => setTaskDialogIsOpen(true)}>
             <AddIcon />
             Nova tarefa
           </Button>
 
-          <AddTaskDialog isOpen={true} />
+          <AddTaskDialog
+            isOpen={addTaskDialogIsOpen}
+            handleClose={handleDialogClose}
+          />
         </div>
       </div>
 
