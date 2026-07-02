@@ -17,12 +17,12 @@ const statusConfig = {
   },
 }
 
-const TaskItem = ({ task }) => {
+const TaskItem = ({ task, handleTaskCheckBoxClick }) => {
   const status = statusConfig[task.status]
 
   return (
     <div
-      className={`flex items-center justify-between gap-2 rounded-lg px-4 py-3 text-sm ${status.container}`}
+      className={`flex items-center justify-between gap-2 rounded-lg px-4 py-3 text-sm transition ${status.container}`}
     >
       <div className="flex items-center gap-2">
         <label
@@ -32,6 +32,7 @@ const TaskItem = ({ task }) => {
             type="checkbox"
             checked={task.status === "done"}
             className="absolute h-full w-full cursor-pointer opacity-0"
+            onChange={() => handleTaskCheckBoxClick(task.id)}
           />
 
           {task.status === "done" && <CheckIcon />}
