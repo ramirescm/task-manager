@@ -8,7 +8,7 @@ const Sidebar = () => {
       <div className="space-y-4 px-8 py-6">
         <h1 className="text-xl font-bold">Task Manager</h1>
         <p>
-          Um simples{" "}
+          Um simples
           <span className="text-[#00ADB5]">organizador de tarefa</span>
         </p>
       </div>
