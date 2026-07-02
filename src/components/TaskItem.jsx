@@ -1,5 +1,5 @@
+import { CheckIcon, DetailsIcon, LoaderIcon, TrashIcon } from "../assets/icons"
 import Button from "./Button"
-import { TrashIcon, CheckIcon, LoaderIcon, DetailsIcon } from "../assets/icons"
 
 const statusConfig = {
   done: {
