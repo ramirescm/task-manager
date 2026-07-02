@@ -9,6 +9,7 @@ import {
   TrashIcon,
 } from "../assets/icons"
 import TASKS from "../constants/tasks"
+import AddTaskDialog from "./AddTaskDialog"
 import Button from "./Button"
 import TaskItem from "./TaskItem"
 import TaskSeparator from "./TaskSeprator"
@@ -71,6 +72,8 @@ const Tasks = () => {
             <AddIcon />
             Nova tarefa
           </Button>
+
+          <AddTaskDialog isOpen={true} />
         </div>
       </div>
 
