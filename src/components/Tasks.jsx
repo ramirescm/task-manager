@@ -65,14 +65,6 @@ const Tasks = () => {
   }
 
   const handleTaskDeleteClick = async (taskId) => {
-    const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-      method: "DELETE",
-    })
-
-    if (!response.ok) {
-      throw new Error("Failed to delete task")
-    }
-
     const updatedTasks = tasks.filter((task) => task.id !== taskId)
     setTasks(updatedTasks)
     toast.success("Tarefa removida com sucesso!")
@@ -157,7 +149,7 @@ const Tasks = () => {
               key={task.id}
               task={task}
               handleCheckBoxClick={handleTaskCheckBoxClick}
-              handleDeleteClick={handleTaskDeleteClick}
+              onDeleteSuccess={handleTaskDeleteClick}
             />
           ))}
         </div>

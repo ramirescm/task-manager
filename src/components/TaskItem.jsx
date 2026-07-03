@@ -1,4 +1,5 @@
 import PropTypes from "prop-types"
+import { useState } from "react"
 
 import { CheckIcon, DetailsIcon, LoaderIcon, TrashIcon } from "../assets/icons"
 import Button from "./Button"
@@ -18,8 +19,23 @@ const statusConfig = {
   },
 }
 
-const TaskItem = ({ task, handleCheckBoxClick, handleDeleteClick }) => {
+const TaskItem = ({ task, handleCheckBoxClick, onDeleteSuccess }) => {
+  const [isDeleting, setIsDeleting] = useState(false)
   const status = statusConfig[task.status]
+
+  const handleDeleteClick = async (taskId) => {
+    setIsDeleting(true)
+    const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+      method: "DELETE",
+    })
+
+    if (!response.ok) {
+      setIsDeleting(false)
+      throw new Error("Failed to delete task")
+    }
+    onDeleteSuccess(task.id)
+    setIsDeleting(false)
+  }
 
   return (
     <div
@@ -46,8 +62,16 @@ const TaskItem = ({ task, handleCheckBoxClick, handleDeleteClick }) => {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button color="ghost" onClick={() => handleDeleteClick(task.id)}>
-          <TrashIcon className="text-brand-text-gray" />
+        <Button
+          color="ghost"
+          onClick={() => handleDeleteClick(task.id)}
+          disabled={isDeleting}
+        >
+          {isDeleting ? (
+            <LoaderIcon className="text-brand-text-gray animate-spin" />
+          ) : (
+            <TrashIcon className="text-brand-text-gray" />
+          )}
         </Button>
 
         <a href="#" className="transition hover:opacity-75">

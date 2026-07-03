@@ -1,12 +1,4 @@
 {
-  "tasks": [
-    {
-      "id": "ENyVDz-jrAs",
-      "title": "aaaa",
-      "time": "afternoon",
-      "description": "fdfdf",
-      "status": "not_started"
-    }
-  ],
+  "tasks": [],
   "$schema": "./node_modules/json-server/schema.json"
 }
