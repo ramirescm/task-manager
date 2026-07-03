@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 import {
@@ -8,18 +8,34 @@ import {
   SunIcon,
   TrashIcon,
 } from "../assets/icons"
-import TASKS from "../constants/tasks"
 import AddTaskDialog from "./AddTaskDialog"
 import Button from "./Button"
 import TaskItem from "./TaskItem"
 import TaskSeparator from "./TaskSeparator"
 
 const Tasks = () => {
-  const [tasks, setTasks] = useState(TASKS)
+  const [tasks, setTasks] = useState([])
   const [addTaskDialogIsOpen, setTaskDialogIsOpen] = useState(false)
   const tasksMorning = tasks.filter((task) => task.time === "morning")
   const tasksAfternoon = tasks.filter((task) => task.time === "afternoon")
   const tasksEvening = tasks.filter((task) => task.time === "evening")
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/tasks")
+        if (!response.ok) {
+          throw new Error("Failed to fetch tasks")
+        }
+        const data = await response.json()
+        setTasks(data)
+      } catch (error) {
+        console.error("Error fetching tasks:", error)
+      }
+    }
+
+    fetchTasks()
+  }, [])
 
   const handleTaskCheckBoxClick = (taskId) => {
     const updatedTasks = tasks.map((task) => {
@@ -106,7 +122,7 @@ const Tasks = () => {
         </div>
 
         <div className="my-3 space-y-3">
-          <TaskSeparator title={2} icon={<CloudSunIcon />} />
+          <TaskSeparator title="Tarde" icon={<CloudSunIcon />} />
 
           {tasksAfternoon.map((task) => (
             <TaskItem
