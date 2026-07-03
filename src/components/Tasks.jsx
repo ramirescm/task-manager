@@ -12,7 +12,7 @@ import TASKS from "../constants/tasks"
 import AddTaskDialog from "./AddTaskDialog"
 import Button from "./Button"
 import TaskItem from "./TaskItem"
-import TaskSeparator from "./TaskSeprator"
+import TaskSeparator from "./TaskSeparator"
 
 const Tasks = () => {
   const [tasks, setTasks] = useState(TASKS)
@@ -106,7 +106,7 @@ const Tasks = () => {
         </div>
 
         <div className="my-3 space-y-3">
-          <TaskSeparator title="Tarde" icon={<CloudSunIcon />} />
+          <TaskSeparator title={2} icon={<CloudSunIcon />} />
 
           {tasksAfternoon.map((task) => (
             <TaskItem
