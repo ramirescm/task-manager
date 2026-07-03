@@ -3,13 +3,16 @@ import "./AddTaskDialog.css"
 import { useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { CSSTransition } from "react-transition-group"
+import { toast } from "sonner"
 import { v4 as uuidv4 } from "uuid"
 
+import { LoaderIcon } from "../assets/icons"
 import Button from "./Button"
 import Input from "./Input"
 import TimeSelect from "./TimeSelect"
 
-const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
+const AddTaskDialog = ({ isOpen, handleClose, onSubmitSuccess }) => {
+  const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState([])
 
   const nodeRef = useRef() // used when needed to store a reference to a DOM node, in this case the div that contains the dialog
@@ -17,27 +20,31 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
   const timeRef = useRef()
   const descriptionRef = useRef()
 
-  const resetForm = () => {
-    setErrors([])
-  }
+  const titleError = errors.find((error) => error.field === "title")
+  const timeError = errors.find((error) => error.field === "time")
+  const descriptionError = errors.find((error) => error.field === "description")
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     const newErrors = []
 
-    if (!titleRef.current.value.trim()) {
+    const title = titleRef.current.value
+    const time = timeRef.current.value
+    const description = descriptionRef.current.value
+
+    if (!title.trim()) {
       newErrors.push({
         field: "title",
         message: "O título é obrigatório.",
       })
     }
 
-    if (!timeRef.current.value.trim()) {
+    if (!time.trim()) {
       newErrors.push({
         field: "time",
         message: "O horário é obrigatório.",
       })
     }
-    if (!descriptionRef.current.value.trim()) {
+    if (!description.trim()) {
       newErrors.push({
         field: "description",
         message: "A descrição é obrigatória.",
@@ -49,20 +56,30 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
       return
     }
 
-    handleSubmit({
+    const task = {
       id: uuidv4(),
-      title: titleRef.current.value.trim(),
-      time: timeRef.current.value.trim(),
-      description: descriptionRef.current.value.trim(),
+      title,
+      time,
+      description,
       status: "not_started",
+    }
+
+    setIsLoading(true)
+    const response = await fetch("http://localhost:3000/tasks", {
+      method: "POST",
+      body: JSON.stringify(task),
+      headers: { "Content-Type": "application/json" },
     })
-    resetForm()
+
+    if (!response.ok) {
+      setIsLoading(false)
+      return toast.error("Erro ao adicionar tarefa!")
+    }
+
+    onSubmitSuccess(task)
+    setIsLoading(false)
     handleClose()
   }
-
-  const titleError = errors.find((error) => error.field === "title")
-  const timeError = errors.find((error) => error.field === "time")
-  const descriptionError = errors.find((error) => error.field === "description")
 
   return createPortal(
     <CSSTransition
@@ -89,14 +106,20 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
               id="title"
               label="Título"
               placeholder="Insira o título da tarefa"
+              disabled={isLoading}
               errorMessage={titleError?.message}
               ref={titleRef}
             />
-            <TimeSelect ref={timeRef} errorMessage={timeError?.message} />
+            <TimeSelect
+              disabled={isLoading}
+              ref={timeRef}
+              errorMessage={timeError?.message}
+            />
             <Input
               id="description"
               label="Descrição"
               placeholder="Descreva a tarefa"
+              disabled={isLoading}
               ref={descriptionRef}
               errorMessage={descriptionError?.message}
             />
@@ -113,8 +136,10 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
                 size="large"
                 color="primary"
                 className="w-full"
+                disabled={isLoading}
                 onClick={handleSaveClick}
               >
+                {isLoading && <LoaderIcon className="mr-2 animate-spin" />}
                 Salvar
               </Button>
             </div>
