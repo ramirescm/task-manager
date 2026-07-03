@@ -3,16 +3,16 @@ import Button from "./Button"
 
 const statusConfig = {
   done: {
-    container: "bg-[#00ADB5]/10 text-[#00ADB5]",
-    checkbox: "bg-[#00ADB5]",
+    container: "bg-brand-primary/10 text-brand-primary",
+    checkbox: "bg-brand-primary",
   },
   in_progress: {
-    container: "bg-[#FFAA04]/10 text-[#FFAA04]",
-    checkbox: "bg-[#FFAA04]",
+    container: "bg-brand-process/10 text-brand-process",
+    checkbox: "bg-brand-process",
   },
   not_started: {
-    container: "bg-[#35383E]/10 text-[#35383E]",
-    checkbox: "bg-[#35383E]/10",
+    container: "bg-brand-dark-blue/10 text-brand-dark-blue",
+    checkbox: "bg-brand-dark-blue/10",
   },
 }
 
@@ -45,7 +45,7 @@ const TaskItem = ({ task, handleCheckBoxClick, handleDeleteClick }) => {
 
       <div className="flex items-center gap-2">
         <Button variant="ghost" onClick={() => handleDeleteClick(task.id)}>
-          <TrashIcon className="text-[#9a9c9f]" />
+          <TrashIcon className="text-brand-text-gray" />
         </Button>
 
         <a href="#" className="transition hover:opacity-75">

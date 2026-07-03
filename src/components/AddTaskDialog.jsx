@@ -17,6 +17,10 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
   const timeRef = useRef()
   const descriptionRef = useRef()
 
+  const resetForm = () => {
+    setErrors([])
+  }
+
   const handleSaveClick = () => {
     const newErrors = []
 
@@ -52,6 +56,7 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
       description: descriptionRef.current.value.trim(),
       status: "not_started",
     })
+    resetForm()
     handleClose()
   }
 
@@ -72,8 +77,10 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
         className="fixed top-0 bottom-0 left-0 flex h-screen w-screen items-center justify-center backdrop-blur-md"
       >
         <div className="rounded-xl bg-white p-5 text-center shadow">
-          <h2 className="text-xl font-bold text-[#35383E]">Nova tarefa</h2>
-          <p className="mt-1 mb-4 text-sm text-[#9a9c9f]">
+          <h2 className="text-brand-dark-blue text-xl font-bold">
+            Nova tarefa
+          </h2>
+          <p className="text-brand-text-gray mt-1 mb-4 text-sm">
             Insira as informações
           </p>
 

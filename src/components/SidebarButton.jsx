@@ -1,6 +1,6 @@
 const SidebarButton = ({ children, variant }) => {
-  const selectedClasses = "bg-[#e6f7f8] text-[#00adb5]"
-  const unselectedClasses = "text-[#35383E]"
+  const selectedClasses = "bg-brand-primary/15 text-brand-primary "
+  const unselectedClasses = "text-brand-dark-blue"
 
   const classes = variant === "selected" ? selectedClasses : unselectedClasses
 
