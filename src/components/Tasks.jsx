@@ -64,7 +64,15 @@ const Tasks = () => {
     setTasks(updatedTasks)
   }
 
-  const handleTaskDeleteClick = (taskId) => {
+  const handleTaskDeleteClick = async (taskId) => {
+    const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+      method: "DELETE",
+    })
+
+    if (!response.ok) {
+      throw new Error("Failed to delete task")
+    }
+
     const updatedTasks = tasks.filter((task) => task.id !== taskId)
     setTasks(updatedTasks)
     toast.success("Tarefa removida com sucesso!")
@@ -74,8 +82,16 @@ const Tasks = () => {
     setTaskDialogIsOpen(false)
   }
 
-  const handleAddTaskClick = (newTask) => {
-    console.log("New task:", newTask)
+  const handleAddTaskClick = async (newTask) => {
+    const response = await fetch("http://localhost:3000/tasks", {
+      method: "POST",
+      body: JSON.stringify(newTask),
+      headers: { "Content-Type": "application/json" },
+    })
+
+    if (!response.ok) {
+      return toast.error("Erro ao adicionar tarefa!")
+    }
     setTasks([...tasks, newTask])
     toast.success("Tarefa adicionada com sucesso!")
   }

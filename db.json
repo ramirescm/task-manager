@@ -1,11 +1,12 @@
 {
   "tasks": [
     {
-      "id": "89ed06fd-61d5-4840-bee7-6a19b212e820",
-      "title": "Study React",
-      "time": "morning",
-      "description": "Study React for 2 hours",
+      "id": "ENyVDz-jrAs",
+      "title": "aaaa",
+      "time": "afternoon",
+      "description": "fdfdf",
       "status": "not_started"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
