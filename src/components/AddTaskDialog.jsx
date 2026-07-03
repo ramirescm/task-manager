@@ -23,6 +23,11 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
   }
 
   const handleSaveClick = () => {
+    if (!title.trim() || !time.trim() || !description.trim()) {
+      alert("Todos os campos são obrigatórios")
+      return
+    }
+
     handleSubmit({
       id: uuidv4(),
       title,
