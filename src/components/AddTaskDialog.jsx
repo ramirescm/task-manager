@@ -16,6 +16,12 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
 
   const nodeRef = useRef() // used when needed to store a reference to a DOM node, in this case the div that contains the dialog
 
+  const resetForm = () => {
+    setTitle("")
+    setTime("")
+    setDescription("")
+  }
+
   const handleSaveClick = () => {
     handleSubmit({
       id: uuidv4(),
@@ -24,6 +30,7 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
       description,
       status: "not_started",
     })
+    resetForm()
     handleClose()
   }
 
