@@ -90,12 +90,12 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
               placeholder="Insira o título da tarefa"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              error={titleError}
+              errorMessage={titleError?.message}
             />
             <TimeSelect
               value={time}
               onChange={(e) => setTime(e.target.value)}
-              error={timeError}
+              errorMessage={timeError?.message}
             />
             <Input
               id="description"
@@ -103,7 +103,7 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
               placeholder="Descreva a tarefa"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              error={descriptionError}
+              errorMessage={descriptionError?.message}
             />
             <div className="flex gap-3">
               <Button
