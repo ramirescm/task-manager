@@ -12,7 +12,7 @@ const SidebarButton = ({ children, color }) => {
   })
 
   return (
-    <a href="/tasks" className={sidebar({ color })}>
+    <a href="/" className={sidebar({ color })}>
       {children}
     </a>
   )
