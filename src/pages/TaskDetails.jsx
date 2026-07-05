@@ -1,5 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-//import { useEffect } from "react"
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
@@ -14,6 +13,9 @@ import Button from "../components/Button"
 import Input from "../components/Input"
 import Sidebar from "../components/Sidebar"
 import TimeSelect from "../components/TimeSelect"
+import { useDeleteTask } from "../hooks/data/use-delete-task"
+import { useGetTaskById } from "../hooks/data/use-get-tasks"
+import { useUpdateTask } from "../hooks/data/use-update-task"
 
 const TaskDetailsPage = () => {
   const { taskId } = useParams()
@@ -31,45 +33,18 @@ const TaskDetailsPage = () => {
     window.history.back()
   }
 
-  const queryClient = useQueryClient()
-  const { data: task } = useQuery({
-    queryKey: ["task", taskId],
-    queryFn: async () => {
-      const response = await fetch(`http://localhost:3000/tasks/${taskId}`)
-      if (!response.ok) {
-        throw new Error("Failed to fetch task details")
-      }
-      const task = await response.json()
+  const { data: task } = useGetTaskById(taskId)
+
+  useEffect(() => {
+    if (task) {
       reset(task)
-      return task
-    },
-  })
+    }
+  }, [task, reset])
 
-  // useEffect(() => {
-  //   if (task) {
-  //     reset(task)
-  //   }
-  // }, [task, reset])
-
-  const { mutate: deleteMutate } = useMutation({
-    mutationKey: ["deleteTask", taskId],
-    mutationFn: async () => {
-      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-        method: "DELETE",
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to delete task")
-      }
-    },
-  })
-
+  const { mutate: deleteTask, isPending: deletingTask } = useDeleteTask(taskId)
   const handleDeleteClick = async () => {
-    deleteMutate(undefined, {
+    deleteTask(undefined, {
       onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: ["tasks"],
-        })
         navigate("/")
       },
       onError: () => {
@@ -78,36 +53,9 @@ const TaskDetailsPage = () => {
     })
   }
 
-  const { mutate: saveMutate, isPending } = useMutation({
-    mutationKey: ["update-task", taskId],
-    mutationFn: async (task) => {
-      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-        method: "PATCH",
-        body: JSON.stringify(task),
-        headers: { "Content-Type": "application/json" },
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to update task")
-      }
-
-      return response.json()
-    },
-  })
+  const { mutate: updateTask, isPending: updatingTask } = useUpdateTask(taskId)
   const handleSaveClick = async (task) => {
-    saveMutate(task, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: ["tasks"],
-        })
-      },
-      // onSuccess: (updatedTask) => {
-      //   queryClient.setQueryData(["tasks"], (currentTasks) =>
-      //     currentTasks.map((currentTask) =>
-      //       currentTask.id === updatedTask.id ? updatedTask : currentTask
-      //     )
-      //   )
-      // },
+    updateTask(task, {
       onError: () => {
         toast.error("Erro ao adicionar tarefa!")
       },
@@ -189,9 +137,12 @@ const TaskDetailsPage = () => {
               size="large"
               color="primary"
               type="submit"
-              disabled={isPending}
+              disabled={deletingTask || updatingTask}
             >
-              {isPending && <LoaderIcon className="animate-spin" />} Salvar
+              {(deletingTask || updatingTask) && (
+                <LoaderIcon className="animate-spin" />
+              )}{" "}
+              Salvar
             </Button>
           </div>
         </form>
