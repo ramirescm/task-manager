@@ -9,6 +9,7 @@ import LoaderIcon from "./loader.svg?react"
 import MoonIcon from "./moon.svg?react"
 import SunIcon from "./sun.svg?react"
 import TaskIcon from "./tasks.svg?react"
+import TasksIcon from "./tasks-2.svg?react"
 import TrashIcon from "./trash.svg?react"
 
 export {
@@ -23,5 +24,6 @@ export {
   MoonIcon,
   SunIcon,
   TaskIcon,
+  TasksIcon,
   TrashIcon,
 }
