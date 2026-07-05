@@ -1,6 +1,3 @@
-Here is a polished English version suitable for a GitHub README:
-
-````markdown
 # 📋 Task Manager
 
 A simple task management application designed to help you organize your daily activities in a clean and intuitive way.
@@ -141,4 +138,3 @@ This project was built to practice modern React development, focusing on compone
 ## 📄 License
 
 This project is licensed under the MIT License.
-````
