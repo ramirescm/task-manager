@@ -1,22 +1,11 @@
-import { LoaderIcon, TasksIcon } from "../assets/icons"
-import DashboardCard from "../components/DashboardCard"
+import DashboardCards from "../components/DashboardCards"
 import Header from "../components/Header"
 import Sidebar from "../components/Sidebar"
+import TaskItem from "../components/TaskItem"
 import { useGetTasks } from "../hooks/data/use-get-tasks"
 
 const HomePage = () => {
   const { data: tasks } = useGetTasks()
-  const notStarted = tasks?.filter(
-    (tasks) => tasks.status === "not_started"
-  ).length
-
-  const completed = tasks?.filter((tasks) => tasks.status === "done").length
-
-  const inProgress = tasks?.filter(
-    (tasks) => tasks.status === "in_progress"
-  ).length
-
-  const all = tasks?.length
 
   return (
     <>
@@ -24,27 +13,28 @@ const HomePage = () => {
         <Sidebar />
         <div className="w-full space-y-6 px-8 py-16">
           <Header title="Dashboard" subtitle="Dashboard" />
-          <div className="grid grid-cols-4 gap-9">
-            <DashboardCard
-              icon={<TasksIcon />}
-              mainText={all}
-              secondaryText="Tarefas totais"
-            />
-            <DashboardCard
-              icon={<LoaderIcon />}
-              mainText={notStarted}
-              secondaryText="Tarefas não iniciadas"
-            />
-            <DashboardCard
-              icon={<LoaderIcon />}
-              mainText={inProgress}
-              secondaryText="Tarefas em andamento"
-            />
-            <DashboardCard
-              icon={<TasksIcon />}
-              mainText={completed}
-              secondaryText="Tarefas concluídas"
-            />
+          <DashboardCards />
+          <div className="grid grid-cols-[1.5fr,1fr] gap-6">
+            <div className="space-y-6 rounded-[10px] bg-white p-6">
+              <div>
+                <h3 className="text-xl font-semibold">Tarefas</h3>
+                <span className="text-brand-dark-gray text-sm">
+                  Resumo das tarefas disponíveis
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                {tasks?.map((task) => (
+                  <TaskItem key={task.id} task={task} />
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center justify-center space-y-6 rounded-[10px] bg-white p-6">
+              <p className="text-brand-dark-gray">
+                Cada pequena ação de hoje te aproxima das grandes conquistas de
+                amanhã. Faça o que precisa ser feito!
+              </p>
+            </div>
           </div>
         </div>
       </div>
