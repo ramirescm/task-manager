@@ -35,12 +35,14 @@ const AddTaskDialog = ({ isOpen, handleClose }) => {
 
     addTask(task, {
       onSuccess: () => {
+        console.log("sucesso")
         handleClose()
         reset({ title: "", time: "", description: "" })
         toast.success("Tarefa adicionada com sucesso!")
       },
       onError: () => {
-        return toast.error("Erro ao adicionar tarefa!")
+        console.log("erro")
+        toast.error("Erro ao adicionar tarefa!")
       },
     })
   }

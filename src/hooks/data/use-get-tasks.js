@@ -13,17 +13,3 @@ export const useGetTasks = () => {
     },
   })
 }
-
-export const useGetTaskById = (taskId) => {
-  return useQuery({
-    queryKey: ["task", taskId],
-    queryFn: async () => {
-      const response = await fetch(`http://localhost:3000/tasks/${taskId}`)
-      if (!response.ok) {
-        throw new Error("Failed to fetch task details")
-      }
-      const task = await response.json()
-      return task
-    },
-  })
-}

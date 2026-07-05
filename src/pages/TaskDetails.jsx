@@ -1,4 +1,3 @@
-import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
@@ -14,14 +13,14 @@ import Input from "../components/Input"
 import Sidebar from "../components/Sidebar"
 import TimeSelect from "../components/TimeSelect"
 import { useDeleteTask } from "../hooks/data/use-delete-task"
-import { useGetTaskById } from "../hooks/data/use-get-tasks"
+import { useGetTaskById } from "../hooks/data/use-get-task"
 import { useUpdateTask } from "../hooks/data/use-update-task"
 
 const TaskDetailsPage = () => {
   const { taskId } = useParams()
 
   const {
-    formState: { errors },
+    formState: { errors, isSubmitting },
     register,
     handleSubmit,
     reset,
@@ -33,31 +32,30 @@ const TaskDetailsPage = () => {
     window.history.back()
   }
 
-  const { data: task } = useGetTaskById(taskId)
+  const { data: task } = useGetTaskById({
+    taskId,
+    onSuccess: (task) => reset(task),
+  })
 
-  useEffect(() => {
-    if (task) {
-      reset(task)
-    }
-  }, [task, reset])
-
-  const { mutate: deleteTask, isPending: deletingTask } = useDeleteTask(taskId)
+  const { mutate: deleteTask } = useDeleteTask(taskId)
   const handleDeleteClick = async () => {
     deleteTask(undefined, {
       onSuccess: () => {
-        navigate("/")
+        toast.success("Tarefa deletada com sucesso!")
+        navigate(-1)
       },
-      onError: () => {
-        toast.error("Erro ao excluir tarefa")
-      },
+      onError: () => toast.error("Ocorreu um erro ao deletar a tarefa."),
     })
   }
 
-  const { mutate: updateTask, isPending: updatingTask } = useUpdateTask(taskId)
-  const handleSaveClick = async (task) => {
-    updateTask(task, {
+  const { mutate: updateTask } = useUpdateTask(taskId)
+  const handleSaveClick = async (data) => {
+    updateTask(data, {
+      onSuccess: () => {
+        toast.success("Tarefa salva com sucesso!")
+      },
       onError: () => {
-        toast.error("Erro ao adicionar tarefa!")
+        toast.error("Ocorreu um erro ao salvar a tarefa.")
       },
     })
   }
@@ -137,11 +135,9 @@ const TaskDetailsPage = () => {
               size="large"
               color="primary"
               type="submit"
-              disabled={deletingTask || updatingTask}
+              disabled={isSubmitting}
             >
-              {(deletingTask || updatingTask) && (
-                <LoaderIcon className="animate-spin" />
-              )}{" "}
+              {isSubmitting && <LoaderIcon className="animate-spin" />}
               Salvar
             </Button>
           </div>
