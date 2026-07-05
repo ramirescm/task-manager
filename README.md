@@ -1,20 +1,144 @@
-# React + Vite
+Here is a polished English version suitable for a GitHub README:
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+````markdown
+# 📋 Task Manager
 
-Currently, two official plugins are available:
+A simple task management application designed to help you organize your daily activities in a clean and intuitive way.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ✨ Features
 
-## React Compiler
+- 📌 Create new tasks
+- ✏️ Edit existing tasks
+- 🗑️ Delete tasks
+- 📊 Dashboard with task statistics
+- 🚀 Track task progress
+- 🧹 Clear all tasks
+- 💾 Local data persistence
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 📸 Overview
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The application includes the following sections:
 
-## ESlint
+### 🏠 Home
 
-run: npx eslint --fix src
+The main entry point of the application.
+
+### ✅ My Tasks
+
+View and manage all your tasks in one place.
+
+### 📊 Dashboard
+
+Monitor your productivity with real-time statistics.
+
+Available metrics:
+
+- Total Tasks
+- Not Started Tasks
+- In Progress Tasks
+- Completed Tasks
+
+### ➕ New Task
+
+Create a new task by providing:
+
+- Title
+- Description
+- Status
+- Time
+
+### 🧹 Clear Tasks
+
+Quickly remove all tasks from the application.
+
+---
+
+## 📈 Task Status
+
+Each task can have one of the following statuses:
+
+- ⏳ Not Started
+- 🚧 In Progress
+- ✅ Completed
+
+---
+
+## 🛠️ Tech Stack
+
+- React
+- Vite
+- React Router
+- React Hook Form
+- Tailwind CSS v4
+- Sonner (Toast Notifications)
+
+---
+
+## 🚀 Getting Started
+
+Clone the repository:
+
+```bash
+git clone https://github.com/your-username/task-manager.git
+```
+
+Navigate to the project folder:
+
+```bash
+cd task-manager
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Build for production:
+
+```bash
+npm run build
+```
+
+---
+
+## 📂 Project Structure
+
+```text
+src/
+├── assets/
+├── components/
+├── hooks/
+├── pages/
+├── routes/
+├── services/
+├── styles/
+└── utils/
+```
+
+---
+
+## 🎯 Purpose
+
+This project was built to practice modern React development, focusing on component-based architecture, routing, form handling, state management, and responsive UI development with Tailwind CSS.
+
+---
+
+## 💡 Motivation
+
+> **"Every small action you take today brings you one step closer to tomorrow's greatest achievements. Do what needs to be done."**
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+````
