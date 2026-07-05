@@ -1,5 +1,6 @@
 import "./AddTaskDialog.css"
 
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRef } from "react"
 import { createPortal } from "react-dom"
 import { useForm } from "react-hook-form"
@@ -12,7 +13,7 @@ import Button from "./Button"
 import Input from "./Input"
 import TimeSelect from "./TimeSelect"
 
-const AddTaskDialog = ({ isOpen, handleClose, onSubmitSuccess }) => {
+const AddTaskDialog = ({ isOpen, handleClose }) => {
   const nodeRef = useRef() // used when needed to store a reference to a DOM node, in this case the div that contains the dialog
   const {
     formState: { isSubmitting, errors },
@@ -23,6 +24,22 @@ const AddTaskDialog = ({ isOpen, handleClose, onSubmitSuccess }) => {
     defaultValues: { title: "", time: "", description: "" },
   })
 
+  const queryClient = useQueryClient()
+  const { mutate } = useMutation({
+    mutationKey: "add-task",
+    mutationFn: async (task) => {
+      const response = await fetch("http://localhost:3000/tasks", {
+        method: "POST",
+        body: JSON.stringify(task),
+        headers: { "Content-Type": "application/json" },
+      })
+
+      if (!response.ok) throw new Error()
+
+      return response.json()
+    },
+  })
+
   const handleSaveClick = async (data) => {
     const task = {
       ...data,
@@ -30,19 +47,21 @@ const AddTaskDialog = ({ isOpen, handleClose, onSubmitSuccess }) => {
       status: "not_started",
     }
 
-    const response = await fetch("http://localhost:3000/tasks", {
-      method: "POST",
-      body: JSON.stringify(task),
-      headers: { "Content-Type": "application/json" },
+    mutate(task, {
+      onSuccess: () => {
+        queryClient.setQueryData("tasks", (currentTasks) => {
+          return [...currentTasks, task]
+        })
+
+        handleClose()
+        reset({ title: "", time: "", description: "" })
+
+        toast.success("Tarefa adicionada com sucesso!")
+      },
+      onError: () => {
+        return toast.error("Erro ao adicionar tarefa!")
+      },
     })
-
-    if (!response.ok) {
-      return toast.error("Erro ao adicionar tarefa!")
-    }
-
-    onSubmitSuccess(task)
-    handleClose()
-    reset({ title: "", time: "", description: "" })
   }
 
   return createPortal(

@@ -1,6 +1,7 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import PropTypes from "prop-types"
-import { useState } from "react"
 import { Link } from "react-router-dom"
+import { toast } from "sonner"
 
 import { CheckIcon, DetailsIcon, LoaderIcon, TrashIcon } from "../assets/icons"
 import Button from "./Button"
@@ -20,22 +21,36 @@ const statusConfig = {
   },
 }
 
-const TaskItem = ({ task, handleCheckBoxClick, onDeleteSuccess }) => {
-  const [isDeleting, setIsDeleting] = useState(false)
+const TaskItem = ({ task, handleCheckBoxClick }) => {
   const status = statusConfig[task.status]
 
-  const handleDeleteClick = async (taskId) => {
-    setIsDeleting(true)
-    const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-      method: "DELETE",
-    })
+  const queryClient = useQueryClient()
 
-    if (!response.ok) {
-      setIsDeleting(false)
-      throw new Error("Failed to delete task")
-    }
-    onDeleteSuccess(task.id)
-    setIsDeleting(false)
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["deleteTask", task.id],
+    mutationFn: async () => {
+      const response = await fetch(`http://localhost:3000/tasks/${task.id}`, {
+        method: "DELETE",
+      })
+      return response.json()
+    },
+  })
+
+  const handleDeleteClick = () => {
+    mutate(undefined, {
+      onSuccess: () => {
+        queryClient.setQueryData("tasks", (currentTasks) => {
+          return currentTasks.filter(
+            (currentTask) => currentTask.id !== task.id
+          )
+        })
+
+        toast.success("Tarefa removida com sucesso!")
+      },
+      onError: () => {
+        toast.error("Erro ao excluir tarefa")
+      },
+    })
   }
 
   return (
@@ -66,9 +81,9 @@ const TaskItem = ({ task, handleCheckBoxClick, onDeleteSuccess }) => {
         <Button
           color="ghost"
           onClick={() => handleDeleteClick(task.id)}
-          disabled={isDeleting}
+          disabled={isPending}
         >
-          {isDeleting ? (
+          {isPending ? (
             <LoaderIcon className="text-brand-text-gray animate-spin" />
           ) : (
             <TrashIcon className="text-brand-text-gray" />

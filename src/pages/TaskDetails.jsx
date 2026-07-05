@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+//import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
@@ -16,10 +17,9 @@ import TimeSelect from "../components/TimeSelect"
 
 const TaskDetailsPage = () => {
   const { taskId } = useParams()
-  const [task, setTask] = useState(null)
 
   const {
-    formState: { isSubmitting, errors },
+    formState: { errors },
     register,
     handleSubmit,
     reset,
@@ -31,26 +31,29 @@ const TaskDetailsPage = () => {
     window.history.back()
   }
 
-  useEffect(() => {
-    const fetchTask = async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/tasks/${taskId}`)
-        if (!response.ok) {
-          throw new Error("Failed to fetch task details")
-        }
-        const data = await response.json()
-        setTask(data)
-        reset(data)
-      } catch (error) {
-        console.error("Error fetching task details:", error)
+  const queryClient = useQueryClient()
+  const { data: task } = useQuery({
+    queryKey: ["task", taskId],
+    queryFn: async () => {
+      const response = await fetch(`http://localhost:3000/tasks/${taskId}`)
+      if (!response.ok) {
+        throw new Error("Failed to fetch task details")
       }
-    }
+      const task = await response.json()
+      reset(task)
+      return task
+    },
+  })
 
-    fetchTask()
-  }, [taskId, reset])
+  // useEffect(() => {
+  //   if (task) {
+  //     reset(task)
+  //   }
+  // }, [task, reset])
 
-  const handleDeleteClick = async () => {
-    try {
+  const { mutate: deleteMutate } = useMutation({
+    mutationKey: ["deleteTask", taskId],
+    mutationFn: async () => {
       const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
         method: "DELETE",
       })
@@ -58,114 +61,142 @@ const TaskDetailsPage = () => {
       if (!response.ok) {
         throw new Error("Failed to delete task")
       }
+    },
+  })
 
-      navigate("/")
-    } catch (error) {
-      console.log(error)
-      toast.error("Erro ao excluir tarefa")
-    }
+  const handleDeleteClick = async () => {
+    deleteMutate(undefined, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["tasks"],
+        })
+        navigate("/")
+      },
+      onError: () => {
+        toast.error("Erro ao excluir tarefa")
+      },
+    })
   }
 
-  const handleSaveClick = async (data) => {
-    const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
+  const { mutate: saveMutate, isPending } = useMutation({
+    mutationKey: ["update-task", taskId],
+    mutationFn: async (task) => {
+      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+        method: "PATCH",
+        body: JSON.stringify(task),
+        headers: { "Content-Type": "application/json" },
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to update task")
+      }
+
+      return response.json()
+    },
+  })
+  const handleSaveClick = async (task) => {
+    saveMutate(task, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["tasks"],
+        })
+      },
+      // onSuccess: (updatedTask) => {
+      //   queryClient.setQueryData(["tasks"], (currentTasks) =>
+      //     currentTasks.map((currentTask) =>
+      //       currentTask.id === updatedTask.id ? updatedTask : currentTask
+      //     )
+      //   )
+      // },
+      onError: () => {
+        toast.error("Erro ao adicionar tarefa!")
+      },
     })
-
-    if (!response.ok) {
-      return toast.error("Erro ao adicionar tarefa!")
-    }
-
-    const newTask = await response.json()
-    setTask(newTask)
   }
 
   return (
-    task && (
-      <div className="flex">
-        <Sidebar />
-        <div className="w-full space-y-6 px-8 py-16">
-          <div className="flex w-full justify-between">
-            <div>
-              <button
-                onClick={handleBackClick}
-                className="bg-brand-primary mb-3 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full"
-              >
-                <ArrowLeftIcon />
-              </button>
-              <div className="flex items-center gap-1 text-xs">
-                <Link className="text-brand-text-gray cursor-pointer" to="/">
-                  Minhas Compras
-                </Link>
-                <ChevronRightIcon className="text-brand-text-gray" />
-                <span className="text-brand-primary font-semibold">
-                  {task?.title}
-                </span>
-              </div>
-
-              <h1 className="mt-2 text-xl font-semibold">{task?.title}</h1>
-            </div>
-            <Button
-              color="danger"
-              className="h-fit self-end"
-              onClick={handleDeleteClick}
+    <div className="flex">
+      <Sidebar />
+      <div className="w-full space-y-6 px-8 py-16">
+        <div className="flex w-full justify-between">
+          <div>
+            <button
+              onClick={handleBackClick}
+              className="bg-brand-primary mb-3 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full"
             >
-              <TrashIcon />
-              Deletar tarefa
+              <ArrowLeftIcon />
+            </button>
+            <div className="flex items-center gap-1 text-xs">
+              <Link className="text-brand-text-gray cursor-pointer" to="/">
+                Minhas Compras
+              </Link>
+              <ChevronRightIcon className="text-brand-text-gray" />
+              <span className="text-brand-primary font-semibold">
+                {task?.title}
+              </span>
+            </div>
+
+            <h1 className="mt-2 text-xl font-semibold">{task?.title}</h1>
+          </div>
+          <Button
+            color="danger"
+            className="h-fit self-end"
+            onClick={handleDeleteClick}
+          >
+            <TrashIcon />
+            Deletar tarefa
+          </Button>
+        </div>
+        <form onSubmit={handleSubmit(handleSaveClick)}>
+          <div className="bg-brand-white space-y-6 rounded-xl p-6">
+            <div>
+              <Input
+                id="title"
+                label="Título"
+                {...register("title", {
+                  required: "O título é obrigatório",
+                  validate: (value) => {
+                    if (!value.trim()) {
+                      return "O título não pode ser vazio"
+                    }
+                    return true
+                  },
+                })}
+                errorMessage={errors?.title?.message}
+              />
+            </div>
+            <div>
+              <TimeSelect
+                {...register("time", {
+                  required: "O horário é obrigatório",
+                })}
+                errorMessage={errors?.time?.message}
+              />
+            </div>
+            <div>
+              <Input
+                id="description"
+                label="Descrição"
+                {...register("description", {
+                  required: "A descrição é obrigatória",
+                })}
+                errorMessage={errors?.description?.message}
+              />
+            </div>
+          </div>
+          <div className="flex w-full justify-end gap-3">
+            <Button
+              size="large"
+              color="primary"
+              type="submit"
+              disabled={isPending}
+            >
+              {isPending && <LoaderIcon className="animate-spin" />} Salvar
             </Button>
           </div>
-          <form onSubmit={handleSubmit(handleSaveClick)}>
-            <div className="bg-brand-white space-y-6 rounded-xl p-6">
-              <div>
-                <Input
-                  id="title"
-                  label="Título"
-                  {...register("title", {
-                    required: "O título é obrigatório",
-                    validate: (value) => {
-                      if (!value.trim()) {
-                        return "O título não pode ser vazio"
-                      }
-                      return true
-                    },
-                  })}
-                  errorMessage={errors?.title?.message}
-                />
-              </div>
-              <div>
-                <TimeSelect
-                  {...register("time", {
-                    required: "O horário é obrigatório",
-                  })}
-                  errorMessage={errors?.time?.message}
-                />
-              </div>
-              <div>
-                <Input
-                  id="description"
-                  label="Descrição"
-                  {...register("description", {
-                    required: "A descrição é obrigatória",
-                  })}
-                  errorMessage={errors?.description?.message}
-                />
-              </div>
-            </div>
-            <div className="flex w-full justify-end gap-3">
-              <Button
-                size="large"
-                color="primary"
-                type="submit"
-                disabled={isSubmitting}
-              >
-                {isSubmitting && <LoaderIcon className="animate-spin" />} Salvar
-              </Button>
-            </div>
-          </form>
-        </div>
+        </form>
       </div>
-    )
+    </div>
   )
 }
 
