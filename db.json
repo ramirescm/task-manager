@@ -1,25 +1,11 @@
 {
   "tasks": [
     {
-      "title": "as",
-      "time": "morning",
-      "description": "sf",
-      "id": "kY6j5FGrl84",
-      "status": "done"
-    },
-    {
-      "title": "sf",
+      "title": "sdsdsd",
       "time": "afternoon",
-      "description": "sf",
-      "id": "uKS60DXaqpE",
-      "status": "in_progress"
-    },
-    {
-      "title": "sf",
-      "time": "evening",
-      "description": "sf",
-      "id": "qTrwdGkTFQo",
-      "status": "not_started"
+      "description": "sdsds",
+      "id": "dA1kVDcY5fE",
+      "status": "done"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
