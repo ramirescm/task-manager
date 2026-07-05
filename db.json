@@ -1,4 +1,26 @@
 {
-  "tasks": [],
+  "tasks": [
+    {
+      "title": "as",
+      "time": "morning",
+      "description": "sf",
+      "id": "kY6j5FGrl84",
+      "status": "done"
+    },
+    {
+      "title": "sf",
+      "time": "afternoon",
+      "description": "sf",
+      "id": "uKS60DXaqpE",
+      "status": "in_progress"
+    },
+    {
+      "title": "sf",
+      "time": "evening",
+      "description": "sf",
+      "id": "qTrwdGkTFQo",
+      "status": "not_started"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }
